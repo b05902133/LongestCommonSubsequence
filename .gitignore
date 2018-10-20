@@ -2,3 +2,4 @@ lcs
 *.o
 *.d
 tags
+*.log
