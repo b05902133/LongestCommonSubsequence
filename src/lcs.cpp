@@ -54,7 +54,7 @@ void LCS::evalDatabase()
         data.sources.push_back( Source::dec_ab );
         // end remove A[i] and B[j]
 
-        if( mStringA[i] == mStringB[j] ) ++data.length;
+        if( mStringA[i-1] == mStringB[j-1] ) ++data.length; // check if A[i] == B[j]
 
         // A[i] is not in lcs
         if( mDatabase[i-1][j].length > data.length )
@@ -101,7 +101,7 @@ void LCS::collectResults( size_t i, size_t j, std::string &lcs )
        case Source::dec_b: collectResults( i, j - 1, lcs ); break;
        case Source::dec_ab:
 
-         lcs.push_back( mStringA[i] );
+         lcs.push_back( mStringA[i-1] );
          collectResults( i - 1, j - 1, lcs );
          lcs.pop_back();
          break;
@@ -110,6 +110,7 @@ void LCS::collectResults( size_t i, size_t j, std::string &lcs )
        default:
 
          mResults.push_back( lcs );
+         reverse( mResults.back().begin(), mResults.back().end() );
          break;
      }
   }
@@ -119,7 +120,7 @@ void LCS::printResults()
 {
   cout << mResults.front().size() << " " << mResults.size() << "\n";
 
-  for( string &lcs : mResults )
+  for( const string &lcs : mResults )
      cout << lcs << "\n";
 }
 // end private member functions
