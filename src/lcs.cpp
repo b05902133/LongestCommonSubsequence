@@ -54,7 +54,13 @@ void LCS::evalDatabase()
         data.sources.push_back( Source::dec_ab );
         // end remove A[i] and B[j]
 
-        if( mStringA[i-1] == mStringB[j-1] ) ++data.length; // check if A[i] == B[j]
+        // check if A[i] == B[j]
+        if( mStringA[i-1] == mStringB[j-1] )
+        {
+          ++data.length;
+          data.sources.back() = Source::dec_ab_common;
+        }
+        // end check if A[i] == B[j]
 
         // A[i] is not in lcs
         if( mDatabase[i-1][j].length > data.length )
@@ -97,9 +103,10 @@ void LCS::collectResults( size_t i, size_t j, std::string &lcs )
   {
      switch( source )
      {
-       case Source::dec_a: collectResults( i - 1, j, lcs ); break;
-       case Source::dec_b: collectResults( i, j - 1, lcs ); break;
-       case Source::dec_ab:
+       case Source::dec_a:  collectResults( i - 1,  j,      lcs ); break;
+       case Source::dec_b:  collectResults( i,      j - 1,  lcs ); break;
+       case Source::dec_ab: collectResults( i - 1,  j - 1,  lcs ); break;
+       case Source::dec_ab_common:
 
          lcs.push_back( mStringA[i-1] );
          collectResults( i - 1, j - 1, lcs );

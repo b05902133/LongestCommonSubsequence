@@ -13,6 +13,7 @@ class LCS
       dec_a,
       dec_b,
       dec_ab,
+      dec_ab_common,
       null
     };
 
