@@ -8,6 +8,9 @@ testcases    := $(wildcard ${testcaseDir}/*.input)
 testcaseRefs := $(wildcard ${testcaseDir}/*.output)
 testResults  := $(patsubst ${testcaseDir}/%.input,${testResultsDir}/%.log,${testcases})
 
+timeLimit := 1000  # unit: second
+memLimit  := 64000 # unit: KB
+
 .PHONY: all ${testcaseRefs}
 
 all: ${testResultsDir} ${testResults} ${testcaseRefs}
@@ -17,7 +20,8 @@ ${testResultsDir}:
 
 ${testResults}: case += $(patsubst ${testResultsDir}/%.log,${testcaseDir}/%.input,$@)
 ${testResults}: ${program}
-	cat ${case} | ${program} > $@
+	ulimit -v ${memLimit}; \
+	timeout ${timeLimit} cat ${case} | ${program} > $@
 
 ${testcaseRefs}: result += $(patsubst ${testcaseDir}/%.output,${testResultsDir}/%.log,$@)
 ${testcaseRefs}:
