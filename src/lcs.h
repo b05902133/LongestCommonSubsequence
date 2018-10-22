@@ -7,11 +7,11 @@
 #include <tuple>
 #include <set>
 
-class LCS
+class LCS /*{{{*/
 {
-  public:
+  public: /*{{{*/
 
-    enum Source
+    enum Source /*{{{*/
     {
       dec_a,
       dec_b,
@@ -19,12 +19,12 @@ class LCS
       dec_ab_common,
       null
     };
-
+    /*}}}*/
     struct Data;
 
     void exec( const std::string &a, const std::string &b );
-
-  private:
+    /*}}}*/
+  private: /*{{{*/
 
     using Type  = size_t;
     using Key   = std::set<Type>;
@@ -45,13 +45,15 @@ class LCS
 
     std::map<Key,Type>  mNodes;
     std::vector<Key>    mNodeLeaves;
+    /*}}}*/
 };
-
-struct LCS::Data
+/*}}}*/
+struct LCS::Data /*{{{*/
 {
   std::vector<Source> sources;
   size_t              length;
   Type                type;
 };
-
+/*}}}*/
 #endif
+// vim: foldmethod=marker foldmarker={{{,}}}

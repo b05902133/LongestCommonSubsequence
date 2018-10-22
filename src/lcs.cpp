@@ -4,8 +4,8 @@
 #include <algorithm>
 using namespace std;
 
-// public member functions
-void LCS::exec( const std::string &a, const std::string &b )
+// public member functions {{{
+void LCS::exec( const std::string &a, const std::string &b ) /*{{{*/
 {
   mStringA = a;
   mStringB = b;
@@ -17,11 +17,11 @@ void LCS::exec( const std::string &a, const std::string &b )
   sort( mResults.begin(), mResults.end() );
 
   printResults();
-}
+} /*}}}*/
 // end public member functions
-
+/*}}}*/
 // private member functions
-void LCS::initDatabase()
+void LCS::initDatabase() /*{{{*/
 {
   mDatabase.clear();
   mNodes.clear();
@@ -44,29 +44,29 @@ void LCS::initDatabase()
      }
   }
 }
-
-void LCS::evalDatabase()
+/*}}}*/
+void LCS::evalDatabase() /*{{{*/
 {
   for( size_t i = 1 ; i < mDatabase.size() ; ++i )
      for( size_t j = 1 ; j < mDatabase[i].size() ; ++j )
      {
         Data &data = mDatabase[i][j];
 
-        // remove A[i] and B[j]
+        // remove A[i] and B[j] {{{
         data.length = mDatabase[i-1][j-1].length;
         data.type   = mDatabase[i-1][j-1].type;
         data.sources.push_back( Source::dec_ab );
         // end remove A[i] and B[j]
-
-        // check if A[i] == B[j]
+        /*}}}*/
+        // check if A[i] == B[j] {{{
         if( mStringA[i-1] == mStringB[j-1] )
         {
           ++data.length;
           data.sources.back() = Source::dec_ab_common;
         }
         // end check if A[i] == B[j]
-
-        // A[i] is not in lcs
+        /*}}}*/
+        // A[i] is not in lcs {{{
         if( mDatabase[i-1][j].length > data.length )
         {
           data.length = mDatabase[i-1][j].length;
@@ -80,8 +80,8 @@ void LCS::evalDatabase()
             data.sources.push_back( Source::dec_a );
         }
         // end A[i] is not in lcs
-
-        // B[j] is not in lcs
+        /*}}}*/
+        // B[j] is not in lcs {{{
         if( mDatabase[i][j-1].length > data.length )
         {
           data.length = mDatabase[i][j-1].length;
@@ -95,8 +95,8 @@ void LCS::evalDatabase()
             data.sources.push_back( Source::dec_b );
         }
         // end B[j] is not in lcs
-
-        // setup type
+        /*}}}*/
+        // setup type {{{
         if( data.sources.size() > 1 )
         {
           Key key;
@@ -133,18 +133,18 @@ void LCS::evalDatabase()
           mNodes[key] = data.type;
           mNodeLeaves.push_back( key );
         }
-        // end setup type
+        // end setup type }}}
      }
 }
-
-void LCS::collectResults()
+/*}}}*/
+void LCS::collectResults() /*{{{*/
 {
   string lcs;
 
   collectResults( mStringA.size(), mStringB.size(), lcs );
 }
-
-void LCS::collectResults( size_t i, size_t j, std::string &lcs )
+/*}}}*/
+void LCS::collectResults( size_t i, size_t j, std::string &lcs ) /*{{{*/
 {
   for( Source source : mDatabase[i][j].sources )
   {
@@ -172,16 +172,16 @@ void LCS::collectResults( size_t i, size_t j, std::string &lcs )
      }
   }
 }
-
-void LCS::printResults()
+/*}}}*/
+void LCS::printResults() /*{{{*/
 {
   cout << mResults.front().size() << " " << mResults.size() << "\n";
 
   for( const string &lcs : mResults )
      cout << lcs << "\n";
 }
-
-bool LCS::isSameType( const size_t i, const size_t j, const Type type )
+/*}}}*/
+bool LCS::isSameType( const size_t i, const size_t j, const Type type ) /*{{{*/
 {
   for( Source source : mDatabase[i][j].sources )
   {
@@ -197,5 +197,6 @@ bool LCS::isSameType( const size_t i, const size_t j, const Type type )
      if( type == typeT ) return true;
   }
   return false;
-}
+}/*}}}*/
 // end private member functions
+// vim: foldmethod=marker foldmarker={{{,}}}
