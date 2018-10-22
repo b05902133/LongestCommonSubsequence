@@ -3,6 +3,9 @@
 
 #include <string>
 #include <vector>
+#include <map>
+#include <tuple>
+#include <set>
 
 class LCS
 {
@@ -23,23 +26,32 @@ class LCS
 
   private:
 
+    using Type  = size_t;
+    using Key   = std::set<Type>;
+
     void initDatabase   ();
     void evalDatabase   ();
     void collectResults ();
-    void collectResults ( size_t i, size_t j, std::string &lcs );
+    void collectResults ( const size_t i, const size_t j, std::string &lcs );
     void printResults   ();
+
+    bool isSameType( const size_t i, const size_t j, const Type type );
 
     std::string mStringA;
     std::string mStringB;
 
     std::vector<std::vector<Data>>  mDatabase;
     std::vector<std::string>        mResults;
+
+    std::map<Key,Type>  mNodes;
+    std::vector<Key>    mNodeLeaves;
 };
 
 struct LCS::Data
 {
   std::vector<Source> sources;
-  int                 length;
+  size_t              length;
+  Type                type;
 };
 
 #endif
