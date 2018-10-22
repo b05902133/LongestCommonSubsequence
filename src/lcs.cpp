@@ -109,16 +109,19 @@ void LCS::collectResults( size_t i, size_t j, std::string &lcs )
        case Source::dec_ab_common:
 
          lcs.push_back( mStringA[i-1] );
-         collectResults( i - 1, j - 1, lcs );
+
+         if( lcs.size() == mDatabase[mStringA.size()][mStringB.size()].length )
+         {
+           mResults.push_back( lcs );
+           reverse( mResults.back().begin(), mResults.back().end() );
+         }
+         else
+           collectResults( i - 1, j - 1, lcs );
+
          lcs.pop_back();
          break;
 
-       case Source::null:
-       default:
-
-         mResults.push_back( lcs );
-         reverse( mResults.back().begin(), mResults.back().end() );
-         break;
+       default: break;
      }
   }
 }
