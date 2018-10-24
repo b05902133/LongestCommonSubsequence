@@ -20,8 +20,8 @@ ${testResultsDir}:
 
 ${testResults}: case += $(patsubst ${testResultsDir}/%.log,${testcaseDir}/%.input,$@)
 ${testResults}: ${program}
-	ulimit -v ${memLimit}; \
-	timeout ${timeLimit} cat ${case} | ${program} > $@
+	ulimit -v ${memLimit} -t ${timeLimit}; \
+	cat ${case} | ${program} > $@
 
 ${testcaseRefs}: result += $(patsubst ${testcaseDir}/%.output,${testResultsDir}/%.log,$@)
 ${testcaseRefs}:
