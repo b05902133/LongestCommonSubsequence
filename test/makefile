@@ -26,8 +26,8 @@ ${testResults}: ${program}
 ${testcaseRefs}: result += $(patsubst ${testcaseDir}/%.output,${testResultsDir}/%.log,$@)
 ${testcaseRefs}:
 	@diff $@ ${result} > /dev/null; \
-	if [ $$? ]; then \
-		echo "${result} test fail!"; \
-	else \
+	if [ $$? -eq 0 ]; then \
 		echo "${result} test pass!"; \
+	else \
+		echo "${result} test fail!"; \
 	fi
