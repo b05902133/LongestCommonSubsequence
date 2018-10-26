@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 #include <map>
-#include <tuple>
+#include <utility>
 #include <set>
 
 class LCS /*{{{*/
@@ -16,7 +16,6 @@ class LCS /*{{{*/
       dec_a,
       dec_b,
       dec_ab,
-      dec_ab_common,
       null
     };
     /*}}}*/
@@ -26,33 +25,33 @@ class LCS /*{{{*/
     /*}}}*/
   private: /*{{{*/
 
-    using Type  = size_t;
-    using Key   = std::set<Type>;
+    using CharPair = std::pair<size_t,size_t>;
+
+    static const Data nullData;
 
     void initDatabase   ();
     void evalDatabase   ();
     void collectResults ();
     void collectResults ( const size_t i, const size_t j, std::string &lcs );
-    void printResults   ();
+    void printResults   () const;
 
-    bool isSameType( const size_t i, const size_t j, const Type type );
+    void removeBothSide ( const size_t i, const size_t j );
+    void removeOneSide  ( const size_t i, const size_t j, const Source source );
+
+    const Data& dataSource( const size_t i, const size_t j, const Source source ) const;
 
     std::string mStringA;
     std::string mStringB;
 
     std::vector<std::vector<Data>>  mDatabase;
     std::vector<std::string>        mResults;
-
-    std::map<Key,Type>  mNodes;
-    std::vector<Key>    mNodeLeaves;
     /*}}}*/
 };
 /*}}}*/
 struct LCS::Data /*{{{*/
 {
-  std::vector<Source> sources;
-  size_t              length;
-  Type                type;
+  std::set<CharPair> sources;
+  size_t             length;
 };
 /*}}}*/
 #endif

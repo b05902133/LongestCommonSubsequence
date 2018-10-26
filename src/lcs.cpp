@@ -2,8 +2,10 @@
 
 #include <iostream>
 #include <algorithm>
+#include <cassert>
 using namespace std;
 
+const LCS::Data LCS::nullData = { {}, 0 };
 // public member functions {{{
 void LCS::exec( const std::string &a, const std::string &b ) /*{{{*/
 {
@@ -23,10 +25,6 @@ void LCS::exec( const std::string &a, const std::string &b ) /*{{{*/
 // private member functions
 void LCS::initDatabase() /*{{{*/
 {
-  mDatabase.clear();
-  mNodes.clear();
-  mNodeLeaves.resize( 1 );
-
   mDatabase.resize( mStringA.size() + 1 );
 
   for( size_t i = 0 ; i < mDatabase.size() ; ++i )
@@ -36,11 +34,7 @@ void LCS::initDatabase() /*{{{*/
      for( size_t j = 0 ; j < mDatabase[i].size() ; ++j )
      {
         if( j == 0 || i == 0 )
-        {
           mDatabase[i][j].length  = 0;
-          mDatabase[i][j].type    = mNodes.size();
-          mDatabase[i][j].sources.push_back( Source::null );
-        }
      }
   }
 }
@@ -50,90 +44,9 @@ void LCS::evalDatabase() /*{{{*/
   for( size_t i = 1 ; i < mDatabase.size() ; ++i )
      for( size_t j = 1 ; j < mDatabase[i].size() ; ++j )
      {
-        Data &data = mDatabase[i][j];
-
-        // remove A[i] and B[j] {{{
-        data.length = mDatabase[i-1][j-1].length;
-        data.type   = mDatabase[i-1][j-1].type;
-        data.sources.push_back( Source::dec_ab );
-        // end remove A[i] and B[j]
-        /*}}}*/
-        // check if A[i] == B[j] {{{
-        if( mStringA[i-1] == mStringB[j-1] )
-        {
-          ++data.length;
-          data.sources.back() = Source::dec_ab_common;
-        }
-        // end check if A[i] == B[j]
-        /*}}}*/
-        // A[i] is not in lcs {{{
-        if( mDatabase[i-1][j].length > data.length )
-        {
-          data.length = mDatabase[i-1][j].length;
-          data.type   = mDatabase[i-1][j].type;
-          data.sources.clear();
-          data.sources.push_back( Source::dec_a );
-        }
-        else if( mDatabase[i-1][j].length == data.length )
-        {
-          if( !isSameType( i , j, mDatabase[i-1][j].type ) )
-            data.sources.push_back( Source::dec_a );
-        }
-        // end A[i] is not in lcs
-        /*}}}*/
-        // B[j] is not in lcs {{{
-        if( mDatabase[i][j-1].length > data.length )
-        {
-          data.length = mDatabase[i][j-1].length;
-          data.type   = mDatabase[i][j-1].type;
-          data.sources.clear();
-          data.sources.push_back( Source::dec_b );
-        }
-        else if( mDatabase[i][j-1].length == data.length )
-        {
-          if( !isSameType( i , j, mDatabase[i][j-1].type ) )
-            data.sources.push_back( Source::dec_b );
-        }
-        // end B[j] is not in lcs
-        /*}}}*/
-        // setup type {{{
-        if( data.sources.size() > 1 )
-        {
-          Key key;
-
-          for( Source source : data.sources )
-          {
-             Type type;
-
-             switch( source )
-             {
-               case Source::dec_a:  type = mDatabase[i-1][j].type;    break;
-               case Source::dec_b:  type = mDatabase[i][j-1].type;    break;
-               case Source::dec_ab: type = mDatabase[i-1][j-1].type;  break;
-               default:             type = 0;                         break;
-             }
-             key.insert( mNodeLeaves[type].begin(), mNodeLeaves[type].end() );
-          }
-          auto it = mNodes.find( key );
-
-          if( it == mNodes.end() )
-          {
-            data.type   = mNodes.size() + 1;
-            mNodes[key] = data.type;
-            mNodeLeaves.push_back( key );
-          }
-          else
-            data.type = it->second; // get the type
-        }
-        else if( data.length == 1 && data.sources.front() == Source::dec_ab_common )
-        {
-          Key key = { mNodes.size() + 1 };
-
-          data.type   = mNodes.size() + 1;
-          mNodes[key] = data.type;
-          mNodeLeaves.push_back( key );
-        }
-        // end setup type }}}
+        removeBothSide( i, j );               // remove A[i] and B[j] 
+        removeOneSide( i, j, Source::dec_a ); // A[i] is not in lcs 
+        removeOneSide( i, j, Source::dec_b ); // B[j] is not in lcs 
      }
 }
 /*}}}*/
@@ -146,57 +59,74 @@ void LCS::collectResults() /*{{{*/
 /*}}}*/
 void LCS::collectResults( size_t i, size_t j, std::string &lcs ) /*{{{*/
 {
-  for( Source source : mDatabase[i][j].sources )
+  for( const CharPair &charPair : mDatabase[i][j].sources )
   {
-     switch( source )
+     if( mStringA[charPair.first] == mStringB[charPair.second] )
      {
-       case Source::dec_a:  collectResults( i - 1,  j,      lcs ); break;
-       case Source::dec_b:  collectResults( i,      j - 1,  lcs ); break;
-       case Source::dec_ab: collectResults( i - 1,  j - 1,  lcs ); break;
-       case Source::dec_ab_common:
-
-         lcs.push_back( mStringA[i-1] );
-
-         if( lcs.size() == mDatabase[mStringA.size()][mStringB.size()].length )
-         {
-           mResults.push_back( lcs );
-           reverse( mResults.back().begin(), mResults.back().end() );
-         }
-         else
-           collectResults( i - 1, j - 1, lcs );
-
-         lcs.pop_back();
-         break;
-
-       default: break;
+       lcs.push_back( mStringA[charPair.first] );
+       if( lcs.size() == mDatabase[mStringA.size()][mStringB.size()].length )
+       {
+         mResults.push_back( lcs );
+         reverse( mResults.back().begin(), mResults.back().end() );
+       }
+       else
+         collectResults( charPair.first, charPair.second, lcs );
+       lcs.pop_back();
      }
+     else
+       collectResults( charPair.first, charPair.second, lcs );
   }
 }
 /*}}}*/
-void LCS::printResults() /*{{{*/
+void LCS::printResults() const /*{{{*/
 {
+  assert( !mResults.empty() ); // precondition
+
   cout << mResults.front().size() << " " << mResults.size() << "\n";
 
   for( const string &lcs : mResults )
      cout << lcs << "\n";
 }
 /*}}}*/
-bool LCS::isSameType( const size_t i, const size_t j, const Type type ) /*{{{*/
+void LCS::removeBothSide( const size_t i, const size_t j ) /*{{{*/
 {
-  for( Source source : mDatabase[i][j].sources )
-  {
-     size_t typeT;
+  Data        &data     = mDatabase[i][j];
+  const Data  &dataDec  = dataSource( i, j, Source::dec_ab );
 
-     switch( source )
-     {
-       case Source::dec_a:  typeT = mDatabase[i-1][j].type;   break;
-       case Source::dec_b:  typeT = mDatabase[i][j-1].type;   break;
-       case Source::dec_ab: typeT = mDatabase[i-1][j-1].type; break;
-       default:             continue;
-     }
-     if( type == typeT ) return true;
+  data.length = dataDec.length;
+
+  if( mStringA[i-1] == mStringB[j-1] )
+  {
+    ++data.length;
+    data.sources.insert( make_pair( i - 1, j - 1 ) );
   }
-  return false;
-}/*}}}*/
+}
+/*}}}*/
+void LCS::removeOneSide( const size_t i, const size_t j, const Source source ) /*{{{*/
+{
+  assert( source == Source::dec_a || source == Source::dec_b ); // precondition
+
+  Data        &data     = mDatabase[i][j];
+  const Data  &dataDec  = dataSource( i, j, source );
+
+  if( dataDec.length > data.length )
+  {
+    data.length   = dataDec.length;
+    data.sources  = dataDec.sources;
+  }
+  else if( dataDec.length == data.length )
+    data.sources.insert( dataDec.sources.begin(), dataDec.sources.end() );
+}
+/*}}}*/
+const LCS::Data& LCS::dataSource( const size_t i, const size_t j, const Source source ) const /*{{{*/
+{
+  switch( source )
+  {
+    case Source::dec_a:   return mDatabase[i-1][j];
+    case Source::dec_b:   return mDatabase[i][j-1];
+    case Source::dec_ab:  return mDatabase[i-1][j-1];
+    default:              return nullData;
+  }
+} /*}}}*/
 // end private member functions
 // vim: foldmethod=marker foldmarker={{{,}}}
