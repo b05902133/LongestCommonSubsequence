@@ -1,0 +1,36 @@
+# 演算法
+## 找 lcs 長度
+   - 這個 longest common subsequence ( lcs ) 的程式採用 dynamic programming
+   - 給定兩字串
+     - A, 字串長度為 m
+     - B, 字串長度為 n
+   - L[i][j] 表示兩字串 lcs 的長度
+     - 字串 A 前 i 個字元所成的子字串
+     - 字串 B 前 j 個字元所成的子字串
+   - 初始條件
+     - L[i][j] = 0
+       - i 或 j = 0
+     - 程式中的 **LCS::initDatabase**
+   - 遞迴函數
+     - L[i][j] = max( L[i-1][j], L[i][j-1], L[i-1][j-1] + l(i,j) )
+       - L[i-1][j] 表示 A 的子字串最後一個字元不在 lcs
+         - 程式中的 **LCS::removeOneSide** source 給 **Source::dec_a**
+       - L[i][j-1] 表示 B 的子字串最後一個字元不在 lcs
+         - 程式中的 **LCS::removeOneSide** source 給 **Source::dec_b**
+       - L[i-1][j-1] 表示砍掉 A的子字串與 B 的子字串最後一個字元
+         - 如果兩字元在 lcs 中則 l( i, j ) = 1
+         - 如果兩字元不在 lcs 中則 l( i, j ) = 0
+         - 程式中的 **LCS::removeBothSide**
+     - 程式中的 **LCS::evalDatabase**
+   - L[m][n] 即為 lcs 的字串長度
+## 找所有 lcs
+   - 在計算遞迴函數時紀錄上一個 l( i, j ) = 1 的 i, j 配對 ( 以下稱 sources )
+     - 對於 L[i-1][j] 與 L[i][j-1]
+       - 如果等於 L[i][j] 便直接將其 sources 插入 L[i][j] 的 sources
+     - 對於 L[i-1][j-1]
+       - 如果 l( i, j ) = 1 就將 i, j 配對插入 L[i][j] 的 sources
+   - 最後從 L[m][n] 開始根據 sources 找 lcs 的所有字元
+     - 如果遇到 l( i, j ) = 1 的 i, j 分兩種狀況
+       - 將 A[i] 插入 lcs 中並繼續找剩下字元
+       - 直接繼續往下找剩下字元
+   - 程式中的 **LCS::collectResults**
