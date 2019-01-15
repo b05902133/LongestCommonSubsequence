@@ -8,8 +8,8 @@ testcases    := $(wildcard ${testcaseDir}/*.input)
 testcaseRefs := $(wildcard ${testcaseDir}/*.output)
 testResults  := $(patsubst ${testcaseDir}/%.input,${testResultsDir}/%.log,${testcases})
 
-timeLimit := 1000  # unit: second
-memLimit  := 64000 # unit: KB
+timeLimit := 1  		# unit: second
+memLimit  := 64000 	# unit: KB
 
 .PHONY: all ${testcaseRefs}
 
