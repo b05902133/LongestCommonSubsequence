@@ -4,6 +4,10 @@ LD       := g++
 PROG     := lcs
 CTAGS    := ctags
 
+ifeq "${OS}" "Windows_NT"
+	PROG := ${PROG}.exe
+endif
+
 srcDir  := src
 testDir := test
 
