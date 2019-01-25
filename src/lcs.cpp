@@ -59,6 +59,14 @@ void LCS::collectResults() /*{{{*/
 /*}}}*/
 void LCS::collectResults( size_t i, size_t j, std::string &lcs ) /*{{{*/
 {
+  // preconditions
+  assert( i < mDatabase.size()    );
+  assert( j < mDatabase[i].size() );
+  assert( mDatabase.size()          > mStringA.size() );
+  assert( mDatabase.front().size()  > mStringB.size() );
+  assert( lcs.size() < mDatabase[mStringA.size()][mStringB.size()].length );
+  // end preconditions
+
   for( const CharPair &charPair : mDatabase[i][j].sources )
   {
      if( mStringA[charPair.first] == mStringB[charPair.second] )
@@ -90,6 +98,13 @@ void LCS::printResults() const /*{{{*/
 /*}}}*/
 void LCS::removeBothSide( const size_t i, const size_t j ) /*{{{*/
 {
+  // preconditions
+  assert( i < mDatabase.size()    );
+  assert( i - 1 < mStringA.size() );
+  assert( j < mDatabase[i].size() );
+  assert( j - 1 < mStringB.size() );
+  // end preconditions
+
   Data        &data     = mDatabase[i][j];
   const Data  &dataDec  = dataSource( i, j, Source::dec_ab );
 
@@ -104,7 +119,11 @@ void LCS::removeBothSide( const size_t i, const size_t j ) /*{{{*/
 /*}}}*/
 void LCS::removeOneSide( const size_t i, const size_t j, const Source source ) /*{{{*/
 {
-  assert( source == Source::dec_a || source == Source::dec_b ); // precondition
+  // preconditions
+  assert( source == Source::dec_a || source == Source::dec_b );
+  assert( i < mDatabase.size()    );
+  assert( j < mDatabase[i].size() );
+  // end preconditions
 
   Data        &data     = mDatabase[i][j];
   const Data  &dataDec  = dataSource( i, j, source );
@@ -120,6 +139,11 @@ void LCS::removeOneSide( const size_t i, const size_t j, const Source source ) /
 /*}}}*/
 const LCS::Data& LCS::dataSource( const size_t i, const size_t j, const Source source ) const /*{{{*/
 {
+  // preconditions
+  assert( i < mDatabase.size()    );
+  assert( j < mDatabase[i].size() );
+  // end preconditions
+
   switch( source )
   {
     case Source::dec_a:   return mDatabase[i-1][j];
