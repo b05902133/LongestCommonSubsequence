@@ -34,7 +34,7 @@ void LCS::initDatabase() /*{{{*/
      for( size_t j = 0 ; j < mDatabase[i].size() ; ++j )
      {
         if( j == 0 || i == 0 )
-          mDatabase[i][j].length  = 0;
+          mDatabase[i][j].length = 0;
      }
   }
 }
@@ -69,20 +69,15 @@ void LCS::collectResults( size_t i, size_t j, std::string &lcs ) /*{{{*/
 
   for( const CharPair &charPair : mDatabase[i][j].sources )
   {
-     if( mStringA[charPair.first] == mStringB[charPair.second] )
+     lcs.push_back( mStringA[charPair.first] );
+     if( lcs.size() == mDatabase[mStringA.size()][mStringB.size()].length )
      {
-       lcs.push_back( mStringA[charPair.first] );
-       if( lcs.size() == mDatabase[mStringA.size()][mStringB.size()].length )
-       {
-         mResults.push_back( lcs );
-         reverse( mResults.back().begin(), mResults.back().end() );
-       }
-       else
-         collectResults( charPair.first, charPair.second, lcs );
-       lcs.pop_back();
+       mResults.push_back( lcs );
+       reverse( mResults.back().begin(), mResults.back().end() );
      }
      else
        collectResults( charPair.first, charPair.second, lcs );
+     lcs.pop_back();
   }
 }
 /*}}}*/
@@ -129,10 +124,7 @@ void LCS::removeOneSide( const size_t i, const size_t j, const Source source ) /
   const Data  &dataDec  = dataSource( i, j, source );
 
   if( dataDec.length > data.length )
-  {
-    data.length   = dataDec.length;
-    data.sources  = dataDec.sources;
-  }
+    data = dataDec;
   else if( dataDec.length == data.length )
     data.sources.insert( dataDec.sources.begin(), dataDec.sources.end() );
 }
