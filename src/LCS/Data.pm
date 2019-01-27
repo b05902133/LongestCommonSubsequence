@@ -8,6 +8,7 @@ sub new;
 sub lcsLength;
 sub setLcsLength;
 sub sources;
+sub setSources;
 sub insertSource;
 # end interface public member functions
 
@@ -20,7 +21,7 @@ sub new
   my $className = shift;
   my $members   =
     {
-      sources   => []
+      sources   => [],
       lcsLength => 0,
     };
 
@@ -70,6 +71,22 @@ sub sources
 }
 
 =pod
+Set the lcs sources.
+
+Parameters:
+
+  lcs sources.
+    it sould be a list with elements being pairs,
+    this can be constructed by List::Util::pairs.
+=cut
+sub setSources
+{
+  my ( $self, @pairs ) = @_;
+
+  @{ $self->{sources} } = @pairs;
+}
+
+=pod
 Insert sources into the lcs source.
 
 Parameters:
@@ -80,7 +97,7 @@ sub insertSource
 {
   my ( $self, @pairs ) = @_;
 
-  push $self->{sources}, @pairs;
+  push @{ $self->{sources} }, @pairs;
 }
 # end implementation of public member functions
 
