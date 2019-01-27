@@ -4,3 +4,4 @@ lcs.exe
 *.d
 tags
 *.log
+*.vim
