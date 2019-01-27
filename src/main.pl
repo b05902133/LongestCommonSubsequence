@@ -1,5 +1,6 @@
 use strict;
 use warnings;
+use LCS::LCS;
 
 sub main;
 
@@ -15,7 +16,9 @@ sub main
 
     if( @strings >= 2 )
     {
-      print "@strings[0,1]\n";
+      my $engine = LCS->new;
+
+      $engine->exec( $strings[0], $strings[1] );
       last;
     }
   }

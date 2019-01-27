@@ -67,7 +67,7 @@ sub sources
 {
   my $self = shift;
 
-  return $self->{sources};
+  return @{ $self->{sources} };
 }
 
 =pod
