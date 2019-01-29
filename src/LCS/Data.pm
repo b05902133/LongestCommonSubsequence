@@ -97,7 +97,22 @@ sub insertSource
 {
   my ( $self, @pairs ) = @_;
 
-  push @{ $self->{sources} }, @pairs;
+  for my $pair ( @pairs )
+  {
+     my $repeat = 0;
+
+     for my $sourcePair ( @{ $self->{sources} } )
+     {
+        if( $pair->key == $sourcePair->key and $pair->value == $sourcePair->value )
+        {
+          $repeat = 1;
+          last;
+        }
+     }
+     next if $repeat;
+
+     push @{ $self->{sources} }, $pair;
+  }
 }
 # end implementation of public member functions
 

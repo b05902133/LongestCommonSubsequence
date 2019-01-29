@@ -94,9 +94,9 @@ sub initDatabase
 
      for( my $j = 0 ; $j <= length $$mStringB ; ++$j )
      {
-        push @{ ${ $$mDatabase }[$i] }, Data->new;
+        push @{ ${ $mDatabase }->[$i] }, Data->new;
 
-        ${ ${ $$mDatabase }[$i] }[$j]->setLcsLength( 0 ) if $j == 0 or $i == 0;
+        ${ $mDatabase }->[$i][$j]->setLcsLength( 0 ) if $j == 0 or $i == 0;
      }
   }
 }
@@ -109,7 +109,7 @@ sub evalDatabase
 
   for( my $i = 1 ; $i < @{ $$mDatabase } ; ++$i )
   {
-     for( my $j = 1 ; $j < @{ ${ $$mDatabase }[$i] } ; ++$j )
+     for( my $j = 1 ; $j < @{ ${ $mDatabase }->[$i] } ; ++$j )
      {
         $self->removeBothSide( $i, $j );
         $self->removeOneSide( $i, $j, 'dec_a' );
@@ -127,18 +127,28 @@ sub collectResults
     my ( $i, $j, $lcs ) = @_;
     my $lengthA   = length $self->{stringA};
     my $lengthB   = length $self->{stringB};
-    my $lcsLength = ${ ${ $self->{database} }[$lengthA] }[$lengthB]->lcsLength;
+    my $lcsLength = $self->{database}[$lengthA][$lengthB]->lcsLength;
 
-    my $data     = \${ ${ $self->{database} }[$i] }[$j];
+    my $data     = \$self->{database}[$i][$j];
     my $mResults = \$self->{results};
 
-    for my $charPair ( $$data->sources )
+
+    for my $charPair ( ${ $data }->sources )
     {
        my ( $iNext, $jNext )  = @{ $charPair };
        my $char               = substr $self->{stringA}, $iNext, 1;
 
        $$lcs = $char . $$lcs;
-       push @{ $$mResults }, $$lcs if( length $$lcs == $lcsLength );
+
+       if( length $$lcs == $lcsLength )
+       {
+         push @{ $$mResults }, $$lcs
+       }
+       else
+       {
+         $self->collectResults( $iNext, $jNext, $lcs );
+       }
+
        $$lcs = substr $$lcs, 1;
     }
   }
@@ -159,7 +169,7 @@ sub printResults
 
   my $mResults = \$self->{results};
 
-  print( length ${ $$mResults }[0], " ", scalar @{ $$mResults }, "\n" );
+  print( length ${ $mResults }->[0], " ", scalar @{ $$mResults }, "\n" );
 
   for my $lcs ( @{ $$mResults } )
   {
@@ -172,16 +182,16 @@ sub removeBothSide
   my ( $self, $i, $j ) = @_;
   my $dataDec = $self->dataSource( $i, $j, 'dec_ab' );
   my $charA   = substr $self->{stringA}, $i - 1, 1;
-  my $charB   = substr $self->{stringB}, $i - 1, 1;
+  my $charB   = substr $self->{stringB}, $j - 1, 1;
 
-  my $data = \${ ${ $self->{database} }[$i] }[$j];
+  my $data = \$self->{database}[$i][$j];
 
-  $$data->setLcsLength( $$dataDec->lcsLength );
+  ${ $data }->setLcsLength( ${ $dataDec }->lcsLength );
 
   if( $charA eq $charB )
   {
-    $$data->setLcsLength( $$data->lcsLength + 1 );
-    $$data->insertSource( pairs( $i - 1, $j - 1 ) );
+    ${ $data }->setLcsLength( ${ $data }->lcsLength + 1 );
+    ${ $data }->insertSource( pairs( $i - 1, $j - 1 ) );
   }
 }
 
@@ -190,16 +200,16 @@ sub removeOneSide
   my ( $self, $i, $j, $source ) = @_;
   my $dataDec = $self->dataSource( $i, $j, $source );
 
-  my $data = \${ ${ $self->{database} }[$i] }[$j];
+  my $data = \$self->{database}[$i][$j];
 
-  if( $$dataDec->lcsLength > $$data->lcsLength )
+  if( ${ $dataDec }->lcsLength > ${ $data }->lcsLength )
   {
-    $$data->setLcsLength( $$dataDec->lcsLength  );
-    $$data->setSources  ( $$dataDec->sources    );
+    ${ $data }->setLcsLength( ${ $dataDec }->lcsLength  );
+    ${ $data }->setSources  ( ${ $dataDec }->sources    );
   }
-  elsif( $$dataDec->lcsLength == $$data->lcsLength )
+  elsif( ${ $dataDec }->lcsLength == ${ $data }->lcsLength )
   {
-    $$data->insertSource( $$dataDec->sources );
+    ${ $data }->insertSource( ${ $dataDec }->sources );
   }
 }
 
@@ -209,9 +219,9 @@ sub dataSource
 
   my $mDatabase = \$self->{database};
 
-  return \${ ${ $$mDatabase }[$i-1] }[$j]   if( $source eq 'dec_a'  );
-  return \${ ${ $$mDatabase }[$i] }[$j-1]   if( $source eq 'dec_b'  );
-  return \${ ${ $$mDatabase }[$i-1] }[$j-1] if( $source eq 'dec_ab' );
+  return \${ $mDatabase }->[$i-1][$j]   if( $source eq 'dec_a'  );
+  return \${ $mDatabase }->[$i][$j-1]   if( $source eq 'dec_b'  );
+  return \${ $mDatabase }->[$i-1][$j-1] if( $source eq 'dec_ab' );
   return undef;
 }
 # end implementation of private member functions
