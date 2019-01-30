@@ -12,6 +12,14 @@ sub setSources;
 sub insertSource;
 # end interface public member functions
 #}}}
+# interface of non member functions{{{
+sub isPairEqual;
+# end interface of non member functions
+#}}}
+# interface of private member functions{{{
+sub isRepeat;
+# end interface of private member functions
+#}}}
 # implementation of public member functions{{{
 =pod#{{{
 Construct a Data object.
@@ -21,8 +29,8 @@ sub new#{{{
   my $className = shift;
   my $members   =
     {
-      sources   => [],
-      lcsLength => 0,
+      sources   => [],  # a list of pairs, a pair should contain two non-negative interger
+      lcsLength => 0,   # a non-negative integer
     };
 
   bless $members, $className;
@@ -52,6 +60,8 @@ Parameters:
 sub setLcsLength#{{{
 {
   my ( $self, $value ) = @_;
+
+  return unless $value >= 0; # precondition
 
   $self->{lcsLength} = $value;
 }
@@ -99,22 +109,58 @@ sub insertSource#{{{
 
   for my $pair ( @pairs )
   {
-     my $repeat = 0;
-
-     for my $sourcePair ( @{ $self->{sources} } )
-     {
-        if( $pair->key == $sourcePair->key and $pair->value == $sourcePair->value )
-        {
-          $repeat = 1;
-          last;
-        }
-     }
-     next if $repeat;
+     next if $self->isRepeat( $pair );
 
      push @{ $self->{sources} }, $pair;
   }
 }#}}}
-# end implementation of public member functions}}}
+# end implementation of public member functions
+#}}}
+# implementation of non member functions{{{
+=pod#{{{
+Test if two pairs are the same.
+Each pair contains two nonnegative integer.
 
+Parameters:
+
+  1. pair1
+  2. pair2
+
+Return Value:
+
+  a Boolean context indicate if the pairs are the same.
+=cut#}}}
+sub isPairEqual#{{{
+{
+  my ( $pair1, $pair2 ) = @_;
+
+  return ( $pair1->key == $pair2->key and $pair1->value == $pair2->value );
+}#}}}
+# end implementation of non member functions
+#}}}
+# implementation of private member functions{{{
+=pod#{{{
+Test if the pair exists in sources.
+
+Parameters:
+
+  a pair.
+
+Return Value:
+
+  a Boolean context indicate if the pair exists in sources.
+=cut#}}}
+sub isRepeat#{{{
+{
+  my ( $self, $pair ) = @_;
+
+  for my $sourcePair ( @{ $self->{sources} } )
+  {
+     return 1 if isPairEqual( $pair, $sourcePair );
+  }
+  return 0;
+}#}}}
+# end implementation of private member functions
+#}}}
 1;
 # vim: foldmethod=marker foldmarker={{{,}}}
