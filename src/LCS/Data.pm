@@ -3,6 +3,15 @@ package Data;
 use strict;
 use warnings;
 
+=head1 NAME
+
+Data - the data store the information of lcs
+
+=cut
+
+=head1 DESCRIPTIONS
+=cut
+
 # interface of public member functions{{{
 sub new;
 sub lcsLength;
@@ -21,7 +30,11 @@ sub isRepeat;
 # end interface of private member functions
 #}}}
 # implementation of public member functions{{{
-=pod#{{{
+=head2 Public Member Functions
+=cut
+# document{{{
+=head3 new
+
 Construct a Data object.
 =cut#}}}
 sub new#{{{
@@ -36,12 +49,18 @@ sub new#{{{
   bless $members, $className;
 }
 #}}}
-=pod#{{{
+# document{{{
+=head3 lcsLength
+
 Get the lcs length.
 
-Return Value:
+B<Return Value>
 
-  the lcs length.
+=over
+
+=item * the lcs length.
+
+=back
 =cut#}}}
 sub lcsLength#{{{
 {
@@ -50,12 +69,18 @@ sub lcsLength#{{{
   return $self->{lcsLength};
 }
 #}}}
-=pod#{{{
+# document{{{
+=head3 setLcsLength
+
 Set the lcs length.
 
-Parameters:
+B<Parameters>
 
-  lcs length value.
+=over
+
+=item * lcs length value.
+
+=back
 =cut#}}}
 sub setLcsLength#{{{
 {
@@ -66,12 +91,18 @@ sub setLcsLength#{{{
   $self->{lcsLength} = $value;
 }
 #}}}
-=pod#{{{
+# document{{{
+=head3 sources
+
 Get the sources of the lcs.
 
-Return Value:
+B<Return Value>
 
-  a list with elements being a pair.
+=over
+
+=item * a list with elements being a pair.
+
+=back
 =cut#}}}
 sub sources#{{{
 {
@@ -80,14 +111,21 @@ sub sources#{{{
   return @{ $self->{sources} };
 }
 #}}}
-=pod#{{{
+# document{{{
+=head3 setSources
+
 Set the lcs sources.
 
-Parameters:
+B<Parameters>
 
-  lcs sources.
-    it sould be a list with elements being pairs,
-    this can be constructed by List::Util::pairs.
+=over
+
+=item * lcs sources
+
+it sould be a list with elements being pairs,
+this can be constructed by List::Util::pairs.
+
+=back
 =cut#}}}
 sub setSources#{{{
 {
@@ -96,12 +134,20 @@ sub setSources#{{{
   @{ $self->{sources} } = @pairs;
 }
 #}}}
-=pod#{{{
+# document{{{
+=head3 insertSource
+
 Insert sources into the lcs source.
 
-Parameters:
+B<Parameters>
 
-  a list with elements being pairs, this can be constructed by List::Util::pairs.
+=over
+
+=item * a list with elements being pairs
+
+this can be constructed by List::Util::pairs.
+
+=back
 =cut#}}}
 sub insertSource#{{{
 {
@@ -117,18 +163,30 @@ sub insertSource#{{{
 # end implementation of public member functions
 #}}}
 # implementation of non member functions{{{
-=pod#{{{
+=head2 Non-Member Functions
+=cut
+# document{{{
+=head3 isPairEqual
+
 Test if two pairs are the same.
 Each pair contains two nonnegative integer.
 
-Parameters:
+B<Parameters>
 
-  1. pair1
-  2. pair2
+=over
 
-Return Value:
+=item * pair1
+=item * pair2
 
-  a Boolean context indicate if the pairs are the same.
+=back
+
+B<Return Value>
+
+=over
+
+=item * a Boolean context indicate if the pairs are the same.
+
+=back
 =cut#}}}
 sub isPairEqual#{{{
 {
@@ -139,16 +197,28 @@ sub isPairEqual#{{{
 # end implementation of non member functions
 #}}}
 # implementation of private member functions{{{
-=pod#{{{
+=head2 Private Member Functions
+=cut
+# document{{{
+=head3 isRepeat
+
 Test if the pair exists in sources.
 
-Parameters:
+B<Parameters>
 
-  a pair.
+=over
 
-Return Value:
+=item * a pair
 
-  a Boolean context indicate if the pair exists in sources.
+=back
+
+B<Return Value>
+
+=over
+
+=item * a Boolean context indicate if the pair exists in sources.
+
+=back
 =cut#}}}
 sub isRepeat#{{{
 {
