@@ -1,29 +1,16 @@
-CXX      := g++
-CXXFLAGS := -std=c++11 -Wall
-LD       := g++
-PROG     := lcs
-CTAGS    := ctags
-
-ifeq "${OS}" "Windows_NT"
-	PROG := ${PROG}.exe
-endif
-
 srcDir  := src
 testDir := test
 
+PERL      := perl
+PERLFLAGS := -I $(realpath .)/${srcDir}
+PROG      := ${srcDir}/main.pl
+CTAGS     := ctags
+
 .PHONY: all release debug ${PROG} tags test clean
 
-export CXX CXXFLAGS LD PROG
+export PERL PERLFLAGS PROG
 
 all: debug
-
-release: CXXFLAGS += -O2
-release: ${PROG}
-
-debug: CXXFLAGS += -g
-debug: ${PROG}
-
-${PROG}:
 	${MAKE} -C ${srcDir}
 
 tags:
@@ -33,5 +20,4 @@ test: debug
 	${MAKE} -C ${testDir}
 
 clean:
-	${MAKE} -C ${srcDir} clean
-	rm ${PROG}
+	${MAKE} -C ${testDir} clean

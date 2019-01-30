@@ -1,20 +1,14 @@
-# CXX CXXFLAGS LD PROG from ../makefile
-OBJS    := $(subst .cpp,.o,$(wildcard *.cpp))
-program := ../${PROG}
+# PERL PERLFLAGS from ../makefile
+moduleDir := LCS
+modules   := $(wildcard ${moduleDir}/*.pm)
 
-.PHONY: all
+.PHONY: all syntax-check
 
-all: ${program}
+all: syntax-check
 
--include $(subst .o,.d,${OBJS})
-
-${program}: ${OBJS}
-	${LD} -o $@ $^
-
-%.o: %.d
-
-%.d: %.cpp
-	${CXX} ${CXXFLAGS} -MM -MT "$@ $(subst .d,.o,$@)" $< > $@
-
-clean:
-	rm *.{o,d}
+syntax-check: main.pl ${modules}
+	@${PERL} -e ' \
+		for my $$file ( qw( $^ ) ) \
+		{ \
+			system "${PERL} ${PERLFLAGS} -c $$file"; \
+		}'

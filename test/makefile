@@ -1,4 +1,4 @@
-# PROG from ../makefile
+# PERL PERLFLAGS PROG from ../makefile
 testcaseDir    := Testcase
 testResultsDir := TestResults
 
@@ -21,11 +21,11 @@ ${testResultsDir}:
 ${testResults}: case += $(patsubst ${testResultsDir}/%.log,${testcaseDir}/%.input,$@)
 ${testResults}: ${program}
 	ulimit -v ${memLimit} -t ${timeLimit}; \
-	cat ${case} | ${program} > $@
+	cat ${case} | ${PERL} ${PERLFLAGS} ${program} > $@
 
 ${testcaseRefs}: result += $(patsubst ${testcaseDir}/%.output,${testResultsDir}/%.log,$@)
 ${testcaseRefs}:
-	@diff $@ ${result} > /dev/null; \
+	@diff -w $@ ${result} > /dev/null; \
 	if [ $$? -eq 0 ]; then \
 		echo "${result} test pass!"; \
 	else \
