@@ -5,7 +5,7 @@ use warnings;
 use List::Util qw( pairs );
 use LCS::Data;
 
-=constants being used
+=constants being used#{{{
 
 Source:
 
@@ -15,13 +15,13 @@ Source:
   null
 
 =cut
-
-# interface of public member functions
+#}}}
+# interface of public member functions{{{
 sub new;
 sub exec;
 # end interface of public member functions
-
-# interface of private member functions
+#}}}
+# interface of private member functions{{{
 sub initDatabase;
 sub evalDatabase;
 sub collectResults;
@@ -33,12 +33,12 @@ sub removeOneSide;
 
 sub dataSource;
 # end interface of private member functions
-
-# implementation of public member functions
-=pod
+#}}}
+# implementation of public member functions{{{
+=pod#{{{
 Create a LCS object.
-=cut
-sub new
+=cut#}}}
+sub new#{{{
 {
   my $className = shift;
   my $object    =
@@ -52,16 +52,16 @@ sub new
 
   bless $object, $className;
 }
-
-=pod
+#}}}
+=pod#{{{
 Find the lognest common subsequence.
 
 Parameters:
 
   string a
   string b
-=cut
-sub exec
+=cut#}}}
+sub exec#{{{
 {
   my $self = shift;
 
@@ -74,11 +74,11 @@ sub exec
   @{ $self->{results} } = sort @{ $self->{results} };
 
   $self->printResults;
-}
+}#}}}
 # end implementation of public member functions
-
-# implementation of private member functions
-sub initDatabase
+#}}}
+# implementation of private member functions{{{
+sub initDatabase#{{{
 {
   my $self = shift;
 
@@ -100,8 +100,8 @@ sub initDatabase
      }
   }
 }
-
-sub evalDatabase
+#}}}
+sub evalDatabase#{{{
 {
   my $self = shift;
 
@@ -117,8 +117,8 @@ sub evalDatabase
      }
   }
 }
-
-sub collectResults
+#}}}
+sub collectResults#{{{
 {
   my $self = shift;
 
@@ -162,8 +162,8 @@ sub collectResults
     $self->collectResults( length $$mStringA, length $$mStringB, \$lcs );
   }
 }
-
-sub printResults
+#}}}
+sub printResults#{{{
 {
   my $self = shift;
 
@@ -176,8 +176,8 @@ sub printResults
      print( $lcs, "\n" );
   }
 }
-
-sub removeBothSide
+#}}}
+sub removeBothSide#{{{
 {
   my ( $self, $i, $j ) = @_;
   my $dataDec = $self->dataSource( $i, $j, 'dec_ab' );
@@ -194,8 +194,8 @@ sub removeBothSide
     ${ $data }->insertSource( pairs( $i - 1, $j - 1 ) );
   }
 }
-
-sub removeOneSide
+#}}}
+sub removeOneSide#{{{
 {
   my ( $self, $i, $j, $source ) = @_;
   my $dataDec = $self->dataSource( $i, $j, $source );
@@ -212,8 +212,8 @@ sub removeOneSide
     ${ $data }->insertSource( ${ $dataDec }->sources );
   }
 }
-
-sub dataSource
+#}}}
+sub dataSource#{{{
 {
   my ( $self, $i, $j, $source ) = @_;
 
@@ -223,7 +223,8 @@ sub dataSource
   return \${ $mDatabase }->[$i][$j-1]   if( $source eq 'dec_b'  );
   return \${ $mDatabase }->[$i-1][$j-1] if( $source eq 'dec_ab' );
   return undef;
-}
-# end implementation of private member functions
+}#}}}
+# end implementation of private member functions}}}
 
 1;
+# vim: foldmethod=marker foldmarker={{{,}}}
