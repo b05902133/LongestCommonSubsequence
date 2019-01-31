@@ -1,17 +1,21 @@
 # PERL PERLFLAGS PROG from ../makefile
+PERLPROVE := prove
+
 testcaseDir    := Testcase
 testResultsDir := TestResults
+unitTestDir    := Data
 
 program := ../${PROG}
 
-testcases    := $(wildcard ${testcaseDir}/*.input)
-testcaseRefs := $(wildcard ${testcaseDir}/*.output)
-testResults  := $(patsubst ${testcaseDir}/%.input,${testResultsDir}/%.log,${testcases})
+testcases     := $(wildcard ${testcaseDir}/*.input)
+testcaseRefs  := $(wildcard ${testcaseDir}/*.output)
+testResults   := $(patsubst ${testcaseDir}/%.input,${testResultsDir}/%.log,${testcases})
+unitTestcases := $(foreach dir,${unitTestDir},$(wildcard ${dir}/*.t))
 
 timeLimit := 1  		# unit: second
 memLimit  := 64000 	# unit: KB
 
-.PHONY: all ${testcaseRefs}
+.PHONY: all ${testcaseRefs} unit-test
 
 all: ${testResultsDir} ${testResults} ${testcaseRefs}
 
@@ -31,3 +35,10 @@ ${testcaseRefs}:
 	else \
 		echo "${result} test fail!"; \
 	fi
+
+unit-test: ${unitTestcases}
+	@${PERL} -e ' \
+		for my $$test ( qw( $^ ) ) \
+		{ \
+			 system "${PERLPROVE} ${PERLFLAGS} $$test" \
+		}'

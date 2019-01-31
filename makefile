@@ -6,18 +6,23 @@ PERLFLAGS := -I $(realpath .)/${srcDir}
 PROG      := ${srcDir}/main.pl
 CTAGS     := ctags
 
-.PHONY: all release debug ${PROG} tags test clean
+.PHONY: all ${PROG} tags test clean syntax-check unit-test
 
 export PERL PERLFLAGS PROG
 
-all: debug
+all: syntax-check unit-test
+
+syntax-check:
 	${MAKE} -C ${srcDir}
 
 tags:
 	${CTAGS} -R ${srcDir}
 
-test: debug
+test: unit-test
 	${MAKE} -C ${testDir}
+
+unit-test:
+	${MAKE} -C ${testDir} $@
 
 clean:
 	${MAKE} -C ${testDir} clean
