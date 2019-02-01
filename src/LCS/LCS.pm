@@ -224,7 +224,7 @@ sub dataSource#{{{
   return \${ $mDatabase }->[$i-1][$j-1] if( $source eq 'dec_ab' );
   return undef;
 }#}}}
-# end implementation of private member functions}}}
-
+# end implementation of private member functions
+#}}}
 1;
 # vim: foldmethod=marker foldmarker={{{,}}}

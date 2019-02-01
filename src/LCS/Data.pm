@@ -7,8 +7,6 @@ use warnings;
 
 Data - the data store the information of lcs
 
-=cut
-
 =head1 DESCRIPTIONS
 =cut
 
