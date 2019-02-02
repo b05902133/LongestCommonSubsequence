@@ -98,6 +98,8 @@ sub column#{{{
 {
   my $self = shift;
 
+  return 0 if $self->row == 0;
+
   return scalar @{ $$self[0] };
 }
 #}}}

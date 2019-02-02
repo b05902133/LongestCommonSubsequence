@@ -7,8 +7,4 @@ modules   := $(wildcard ${moduleDir}/*.pm)
 all: syntax-check
 
 syntax-check: main.pl ${modules}
-	@${PERL} -e ' \
-		for my $$file ( qw( $^ ) ) \
-		{ \
-			system "${PERL} ${PERLFLAGS} -c $$file"; \
-		}'
+	@${PERL} -e 'system "${PERL} ${PERLFLAGS} -c $$_" for ( qw( $^ ) );'
