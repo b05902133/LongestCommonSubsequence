@@ -3,7 +3,7 @@ PERLPROVE := prove
 
 testcaseDir    := Testcase
 testResultsDir := TestResults
-unitTestDir    := Data
+unitTestDir    := Data Table
 
 program := ../${PROG}
 
@@ -37,8 +37,4 @@ ${testcaseRefs}:
 	fi
 
 unit-test: ${unitTestcases}
-	@${PERL} -e ' \
-		for my $$test ( qw( $^ ) ) \
-		{ \
-			 system "${PERLPROVE} ${PERLFLAGS} $$test" \
-		}'
+	${PERLPROVE} ${PERLFLAGS} ${unitTestDir}

@@ -54,7 +54,7 @@ sub new#{{{
 
      for( my $j = 0 ; $j < $column ; ++$j )
      {
-       push @{ ${ $table }->[$i] }, Data->new;
+       push @{ $table->[$i] }, Data->new;
      }
   }
 
@@ -132,7 +132,7 @@ sub resize#{{{
   # resize row{{{
   if( $rowCurrent <= $row )
   {
-    for my $i ( $rowCurrent + 1 .. $row )
+    for my $i ( $rowCurrent .. $row - 1 )
     {
        push @$self, [];
 
