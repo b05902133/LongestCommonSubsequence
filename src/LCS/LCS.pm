@@ -6,6 +6,8 @@ use List::Util qw( pairs );
 use LCS::Data;
 use LCS::Table;
 
+List::Util->VERSION( 1.39 );
+
 =constants being used#{{{
 
 Source:

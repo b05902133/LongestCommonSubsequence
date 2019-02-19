@@ -4,6 +4,8 @@ use Test::More;
 use LCS::Data;
 use List::Util qw( pairs );
 
+List::Util->VERSION( 1.39 );
+
 can_ok( 'Data', qw( new lcsLength sources setSources insertSource ) );
 
 subtest 'Public Members' => sub#{{{
