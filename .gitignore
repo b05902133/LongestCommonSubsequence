@@ -1,6 +1,3 @@
-lcs
-lcs.exe
-*.o
-*.d
+*.class
 tags
 *.log
