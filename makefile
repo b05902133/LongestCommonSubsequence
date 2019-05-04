@@ -9,7 +9,7 @@ CTAGS     := ctags
 
 .PHONY: all release debug ${PROG} tags test clean
 
-export JAVAC JAVAFLAGS PROG
+export JAVAC JAVAFLAGS JAVA PROG srcDir
 
 all: debug
 

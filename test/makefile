@@ -1,8 +1,9 @@
-# PROG from ../makefile
+# JAVA PROG srcDic from ../makefile
 testcaseDir    := Testcase
 testResultsDir := TestResults
 
-program := ../${PROG}
+program   := ../${PROG}
+JAVAFLAGS := --class-path=../${srcDir}
 
 testcases    := $(wildcard ${testcaseDir}/*.input)
 testcaseRefs := $(wildcard ${testcaseDir}/*.output)
@@ -21,7 +22,7 @@ ${testResultsDir}:
 ${testResults}: case += $(patsubst ${testResultsDir}/%.log,${testcaseDir}/%.input,$@)
 ${testResults}: ${program}
 	ulimit -v ${memLimit} -t ${timeLimit}; \
-	cat ${case} | ${program} > $@
+	cat ${case} | ${JAVA} ${JAVAFLAGS} $(notdir $(basename ${program})) > $@
 
 ${testcaseRefs}: result += $(patsubst ${testcaseDir}/%.output,${testResultsDir}/%.log,$@)
 ${testcaseRefs}:
