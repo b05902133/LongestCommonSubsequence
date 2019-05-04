@@ -11,6 +11,11 @@ class LCS
     NULL
   }
 
+  public LCS()
+  {
+    mResults = new Vector<String>();
+  }
+
   public void exec( String a, String b )
   {
     mStringA = a;
@@ -29,17 +34,20 @@ class LCS
   {
     mDatabase = new Data[mStringA.length()+1][mStringB.length()+1];
 
-    for( int i = 0 ; i < mDatabase.length() ; ++i )
-       mDatabase[i][0].length = 0;
+    for( int i = 0 ; i < mDatabase.length ; ++i )
+       for( int j = 0 ; j < mDatabase[i].length ; ++j )
+       {
+          mDatabase[i][j] = new Data();
 
-    for( int i = 0 ; i < mDatabase[0].length() ; ++i )
-       mDatabase[0][i].length = 0;
+          if( i == 0 || j == 0 )
+            mDatabase[i][j].length = 0;
+       }
   }
 
   private void evalDatabase()
   {
-    for( int i = 1 ; i < mDatabase.length() ; ++i )
-       for( int j = 1 ; j < mDatabase[i].length() ; ++j )
+    for( int i = 1 ; i < mDatabase.length ; ++i )
+       for( int j = 1 ; j < mDatabase[i].length ; ++j )
        {
           removeBothSide( i, j );
           removeOneSide( i, j, Source.DEC_A );
@@ -49,20 +57,20 @@ class LCS
 
   private void collectResults()
   {
-    StringBuffer lcs = new StringBuffer( Ingeter.max( mStringA.length(), mStringB.length() ) );
+    StringBuilder lcs = new StringBuilder( Integer.max( mStringA.length(), mStringB.length() ) );
 
     collectResults( mStringA.length(), mStringB.length(), lcs );
   }
 
-  private void collectResults( int i, int j, StringBuffer lcs )
+  private void collectResults( int i, int j, StringBuilder lcs )
   {
     for( CharPair charPair : mDatabase[i][j].sources )
     {
        lcs.append( mStringA.charAt( charPair.first ) );
        if( lcs.length() == mDatabase[mStringA.length()][mStringB.length()].length )
        {
-         mResults.add( lcs.toString() );
-         mResults.lastElement().reverse();
+         mResults.add( lcs.reverse().toString() );
+         lcs.reverse();
        }
        else
          collectResults( charPair.first, charPair.second, lcs );
@@ -85,7 +93,7 @@ class LCS
 
     data.length = dataDec.length;
 
-    if( mString.charAt( i-1 ) == mStringB.charAt( j-1 ) )
+    if( mStringA.charAt( i-1 ) == mStringB.charAt( j-1 ) )
     {
       ++data.length;
       data.sources.add( new CharPair( i - 1, j - 1 ) );
@@ -110,10 +118,10 @@ class LCS
   {
     switch( source )
     {
-      case Source.DEC_A:  return mDatabase[i-1][j];
-      case Source.DEC_B:  return mDatabase[i][j-1];
-      case Source.DEC_AB: return mDatabase[i-1][j-1];
-      default:            return null;
+      case DEC_A:   return mDatabase[i-1][j];
+      case DEC_B:   return mDatabase[i][j-1];
+      case DEC_AB:  return mDatabase[i-1][j-1];
+      default:      return null;
     }
   }
 
@@ -126,6 +134,11 @@ class LCS
 
 class Data
 {
+  public Data()
+  {
+    sources = new HashSet<CharPair>();
+  }
+
   public HashSet<CharPair>  sources;
   public int                length;
 }

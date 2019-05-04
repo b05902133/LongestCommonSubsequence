@@ -5,8 +5,8 @@ program := ../${PROG}
 
 all: ${program}
 
-${program}: main.java $(filter-out main.java,$(wildcard *.java))
-	${JAVAC} ${JAVAFLAGS} $<
+${program}: $(wildcard *.java)
+	${JAVAC} ${JAVAFLAGS} $^
 
 clean:
 	rm *.class
