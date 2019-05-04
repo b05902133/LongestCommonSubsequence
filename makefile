@@ -1,26 +1,20 @@
-CXX      := g++
-CXXFLAGS := -std=c++11 -Wall
-LD       := g++
-PROG     := lcs
-CTAGS    := ctags
-
-ifeq "${OS}" "Windows_NT"
-	PROG := ${PROG}.exe
-endif
-
 srcDir  := src
 testDir := test
 
+JAVAC     := javac
+JAVAFLAGS :=
+JAVA      := java
+PROG      := ${srcDir}/Main.class
+CTAGS     := ctags
+
 .PHONY: all release debug ${PROG} tags test clean
 
-export CXX CXXFLAGS LD PROG
+export JAVAC JAVAFLAGS PROG
 
 all: debug
 
-release: CXXFLAGS += -O2
 release: ${PROG}
 
-debug: CXXFLAGS += -g
 debug: ${PROG}
 
 ${PROG}:
